@@ -93,7 +93,7 @@ const censoredConfiguration = censorConfiguration({ configuration, configuration
 console.log({ consoredConfiguration });
 ```
 
-You'll notice that the value of `censoredConfiguration.foo` is no longer 'foo-default', but rather '****'.
+You'll notice that the value of `censoredConfiguration.foo` is no longer `foo-default`, but rather `****`.
 
 ### Retrieving only default values
 
