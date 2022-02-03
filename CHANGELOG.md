@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/thenativeweb/get-configuration-from-environment/compare/1.0.0...1.0.1) (2022-02-03)
+
+
+### Bug Fixes
+
+* Update documentation. ([#1](https://github.com/thenativeweb/get-configuration-from-environment/issues/1)) ([0949dc1](https://github.com/thenativeweb/get-configuration-from-environment/commit/0949dc1e6b7b2d4ab7e8717d2bc41b3558b2f9e7))
+
 # 1.0.0 (2022-02-03)
 
 

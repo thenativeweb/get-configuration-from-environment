@@ -1,6 +1,6 @@
 {
   "name": "get-configuration-from-environment",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "get-configuration-from-environment gets an application configuration from environment variables.",
   "contributors": [
     {
