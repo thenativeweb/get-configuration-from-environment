@@ -20,11 +20,26 @@ $ npm install get-configuration-from-environment
 
 ## Quick Start
 
-To get your application's configuration from the environment, you first have to write a `ConfigurationDefinition`:
+First you need to integrate get-configuration-from-environment into your application:
+
+```javascript
+const {
+  fromEnvironmentVariables
+} = require('get-configuration-from-environment');
+```
+
+If you use TypeScript, use the following code instead:
 
 ```typescript
-import { ConfigurationDefinition } from 'get-configuration-from-environment';
+import {
+  ConfigurationDefinition,
+  fromEnvironmentVariables
+} from 'get-configuration-from-environment';
+```
 
+To get your application's configuration from the environment, you first have to define an interface for your configuration, and write an appropriate `ConfigurationDefinition`:
+
+```typescript
 interface Configuration {
   foo: string;
   bar: number;
@@ -44,36 +59,43 @@ const configurationDefinition: ConfigurationDefinition<Configuration> = {
 };
 ```
 
-Then you can use this configuration definition to retrieve a configuration from the environment:
+Then you can use this configuration definition to retrieve the configuration from the environment:
 
 ```typescript
-import { fromEnvironmentVariables } from 'get-configuration-from-environment';
+const configuration =
+  await fromEnvironmentVariables({ configurationDefinition });
 
-const configuration = await fromEnvironmentVariables({ configurationDefinition });
-
-configuration.foo; // 'foo-default' or whatever is set in the environment variable.
+// Either the value from the environment variable, or 'foo-default'.
+console.log(configuration.foo);
 ```
 
-The resulting `configuration` object will contain the JSON-parsed contents of the environment variable or the default value that is defined in the configuration definition.
+The resulting `configuration` object will contain the JSON-parsed contents of the environment variables or the default values that are defined in the configuration definition.
 
 ### Serializing a configuration
 
 In some cases you want to _set_ environment variables rather than _get_ them. For these cases the `toEnvironmentVariables` function can be used to serialize a configuration object to environment-variable-compatible values:
 
 ```typescript
-import { toEnvironmentVariables } from 'get-configuration-from-environment';
+import {
+  toEnvironmentVariables
+} from 'get-configuration-from-environment';
 
-const environmentVariables = toEnvironmentVariables({ configuration, configurationDefinition });
+const environmentVariables =
+  toEnvironmentVariables({ configuration, configurationDefinition });
 ```
 
-The constant `environmentVariables` now contains a `Record<string, string>` with JSON-stringified values from your configuration. You can e.g. pass these to [`nodeenv`](https://www.npmjs.com/package/nodeenv) or further stringify them to create a docker-compose manifest or something along those lines.
+The constant `environmentVariables` now contains a `Record<string, string>` with JSON-stringified values from your configuration. You can e.g. pass these to [nodeenv](https://www.npmjs.com/package/nodeenv) or further stringify them to create a docker-compose manifest or something along these lines.
 
 ### Censoring values in a configuration
 
 If you want to log the loaded configuration in your application, but do not want to leak secrets into your log storage, you can mark fields in your `ConfigurationDefinition` as private and use `censorConfiguration`:
 
 ```typescript
-import { ConfigurationDefinition, censorConfiguration, fromEnvironmentVariables } from 'get-configuration-from-environment';
+import {
+  censorConfiguration,
+  ConfigurationDefinition,
+  fromEnvironmentVariables
+} from 'get-configuration-from-environment';
 
 interface Configuration {
   foo: string;
@@ -87,10 +109,11 @@ const configurationDefinition: ConfigurationDefinition<Configuration> = {
     isPrivate: true
   }
 };
-const configuration = await fromEnvironmentVariables({ configurationDefinition });
 
+const configuration = await fromEnvironmentVariables({ configurationDefinition });
 const censoredConfiguration = censorConfiguration({ configuration, configurationDefinition });
-console.log({ consoredConfiguration });
+
+console.log({ censoredConfiguration });
 ```
 
 You'll notice that the value of `censoredConfiguration.foo` is no longer `foo-default`, but rather `****`.
@@ -100,7 +123,10 @@ You'll notice that the value of `censoredConfiguration.foo` is no longer `foo-de
 If you want to build a configuration object solely from the configured defaults and ignore the actual environment, you can use `getDefaultConfiguration`:
 
 ```typescript
-import { ConfigurationDefinition, getDefaultConfiguration } from 'get-configuration-from-environment';
+import {
+  ConfigurationDefinition,
+  getDefaultConfiguration
+} from 'get-configuration-from-environment';
 
 interface Configuration {
   foo: string;
@@ -115,10 +141,11 @@ const configurationDefinition: ConfigurationDefinition<Configuration> = {
   }
 };
 
-const defaultConfiguration = await getDefaultConfiguration({ configurationDefinition });
+const defaultConfiguration =
+  await getDefaultConfiguration({ configurationDefinition });
 ```
 
-The constant `defaultConfiguration` now contains a configuration object exclusively made from the before defined default values. The environment is never inspected.
+The constant `defaultConfiguration` now contains a configuration object exclusively made from the default values defined before. The environment is never inspected.
 
 ## Running quality assurance
 
